@@ -256,10 +256,8 @@ export function usePayments(month?: number, year?: number) {
 
   const markPending = async (studentId: string): Promise<{ error: string | null }> => {
     const academyId = academy?.id ?? 'demo-academy'
-    const existing = demoPayments.find(
-      p => p.student_id === studentId && p.month === targetMonth && p.year === targetYear
-    )
-
+    
+    // Update local state fallback
     demoPayments = demoPayments.map(p =>
       p.student_id === studentId && p.month === targetMonth && p.year === targetYear
         ? { ...p, status: 'pending', payment_date: null, payment_method: null, transaction_reference: null }
@@ -267,18 +265,33 @@ export function usePayments(month?: number, year?: number) {
     )
     saveStoredPayments(demoPayments)
 
-    if (!isDemoMode && existing) {
+    if (!isDemoMode) {
       try {
-        await supabase
+        const { data: existing_db } = await supabase
           .from('payments')
-          .update({
-            status: 'pending',
-            payment_date: null,
-            payment_method: null,
-            transaction_reference: null,
-          })
-          .eq('id', existing.id)
-      } catch {}
+          .select('id')
+          .eq('academy_id', academyId)
+          .eq('student_id', studentId)
+          .eq('month', targetMonth)
+          .eq('year', targetYear)
+          .single()
+
+        if (existing_db) {
+          const { error: err } = await supabase
+            .from('payments')
+            .update({
+              status: 'pending',
+              payment_date: null,
+              payment_method: null,
+              transaction_reference: null,
+            })
+            .eq('id', existing_db.id)
+            
+          if (err) return { error: err.message }
+        }
+      } catch (err: any) {
+        return { error: err.message }
+      }
     }
 
     await fetchPayments()
