@@ -45,8 +45,8 @@ export function ExpenseForm({ initial, onSubmit, onCancel, loading }: ExpenseFor
             required
             min="0"
             className="form-input"
-            value={formData.amount}
-            onChange={e => setFormData(f => ({ ...f, amount: Number(e.target.value) }))}
+            value={formData.amount === 0 ? '' : formData.amount}
+            onChange={e => setFormData(f => ({ ...f, amount: e.target.value ? Number(e.target.value) : 0 }))}
           />
         </div>
         <div>
