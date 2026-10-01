@@ -4,10 +4,11 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useToast } from '../../contexts/ToastContext'
 
 export function LoginPage() {
-  const { signIn, isDemoMode } = useAuth()
+  const { signIn, signUp, isDemoMode } = useAuth()
   const { showToast } = useToast()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [isSignUp, setIsSignUp] = useState(false)
+  const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [forgotOpen, setForgotOpen] = useState(false)
   const [forgotEmail, setForgotEmail] = useState('')
@@ -17,10 +18,21 @@ export function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    const { error } = await signIn(form.email, form.password)
+    let error = null
+    if (isSignUp) {
+      const res = await signUp(form.email, form.password, form.name || 'Academy Owner')
+      error = res.error
+    } else {
+      const res = await signIn(form.email, form.password)
+      error = res.error
+    }
     setLoading(false)
+    
     if (error) {
-      showToast('error', error.message || 'Invalid email or password')
+      showToast('error', error.message || 'Authentication failed')
+    } else if (isSignUp) {
+      showToast('success', 'Account created! Check your email to confirm if required, or simply wait to be logged in.')
+      navigate('/')
     } else {
       navigate('/')
     }
@@ -81,7 +93,9 @@ export function LoginPage() {
         <div className="text-center mb-8">
           <div className="text-5xl mb-4">🥋</div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Karate Academy</h1>
-          <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Manager · Sign in to continue</p>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
+            Manager · {isSignUp ? 'Create your account' : 'Sign in to continue'}
+          </p>
         </div>
 
         {/* Demo mode banner */}
@@ -93,6 +107,20 @@ export function LoginPage() {
 
         <div className="card p-6">
           <form onSubmit={handleLogin} className="space-y-4">
+            {isSignUp && (
+              <div>
+                <label className="form-label">Your Name</label>
+                <input
+                  id="name"
+                  type="text"
+                  className="form-input"
+                  placeholder="Sensei Mahesh"
+                  value={form.name}
+                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  required={!isDemoMode && isSignUp}
+                />
+              </div>
+            )}
             <div>
               <label className="form-label">Email</label>
               <input
@@ -124,14 +152,22 @@ export function LoginPage() {
               {loading
                 ? <span className="flex items-center gap-2 justify-center">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Signing in...
+                    {isSignUp ? 'Creating...' : 'Signing in...'}
                   </span>
-                : 'Sign In'
+                : isSignUp ? 'Sign Up' : 'Sign In'
               }
             </button>
 
-            {!isDemoMode && (
-              <button type="button" onClick={() => setForgotOpen(true)} className="btn-ghost w-full text-xs">
+            <button 
+              type="button" 
+              onClick={() => setIsSignUp(!isSignUp)} 
+              className="btn-ghost w-full text-xs"
+            >
+              {isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
+            </button>
+
+            {!isDemoMode && !isSignUp && (
+              <button type="button" onClick={() => setForgotOpen(true)} className="btn-ghost w-full text-xs mt-0">
                 Forgot password?
               </button>
             )}

@@ -49,6 +49,7 @@ interface AuthContextValue {
   loading: boolean
   isDemoMode: boolean
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>
+  signUp: (email: string, password: string, name: string) => Promise<{ error: Error | null }>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<{ error: Error | null }>
   updateAcademy: (data: Partial<Academy>) => void
@@ -147,6 +148,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error: error as Error | null }
   }
 
+  const signUp = async (email: string, password: string, name: string) => {
+    if (isDemoMode) return { error: null }
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name } }
+    })
+    return { error: error as Error | null }
+  }
+
   const signOut = async () => {
     if (isDemoMode) {
       setUser(null)
@@ -182,7 +193,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider value={{
       user, session, profile, academy, loading, isDemoMode,
-      signIn, signOut, resetPassword, updateAcademy, updateProfile, refreshAcademy,
+      signIn, signUp, signOut, resetPassword, updateAcademy, updateProfile, refreshAcademy,
     }}>
       {children}
     </AuthContext.Provider>

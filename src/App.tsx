@@ -4,6 +4,8 @@ import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { ToastProvider } from './contexts/ToastContext'
 import { ToastContainer } from './components/ui/Toast'
+import { useAuth } from './contexts/AuthContext'
+import { LoginPage } from './pages/auth/LoginPage'
 import { AppShell } from './components/layout/AppShell'
 import { DashboardPage } from './pages/dashboard/DashboardPage'
 import { StudentsPage } from './pages/students/StudentsPage'
@@ -14,6 +16,16 @@ import { ReportsPage } from './pages/reports/ReportsPage'
 import { SettingsPage } from './pages/settings/SettingsPage'
 
 function AppRouter() {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950 text-brand-600">Loading...</div>
+  }
+
+  if (!user) {
+    return <LoginPage />
+  }
+
   return (
     <AppShell>
       <Routes>
