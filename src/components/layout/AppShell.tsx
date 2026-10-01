@@ -22,6 +22,7 @@ const BOTTOM_NAV = [
   { to: '/students', label: 'Students', icon: Users },
   { to: '/reminders', label: 'Remind', icon: Bell },
   { to: '/reports', label: 'Reports', icon: BarChart2 },
+  { to: '/expenses', label: 'Expenses', icon: Wallet },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
 
