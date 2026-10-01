@@ -75,6 +75,17 @@ export interface Settings {
   updated_at: string
 }
 
+export interface Expense {
+  id: string
+  academy_id: string
+  title: string
+  amount: number
+  category: string
+  expense_date: string
+  notes: string | null
+  created_at: string
+}
+
 // Joined/enriched types used in UI
 
 export interface StudentWithPayment extends Student {
@@ -118,6 +129,14 @@ export interface PaymentFormData {
   payment_date: string
   payment_method: PaymentMethod
   transaction_reference: string
+}
+
+export interface ExpenseFormData {
+  title: string
+  amount: number
+  category: string
+  expense_date: string
+  notes: string
 }
 
 // UI state types

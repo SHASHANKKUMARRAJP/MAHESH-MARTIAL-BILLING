@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Users, Bell, CreditCard, BarChart2,
-  Settings, ChevronRight, LogOut,
+  Settings, ChevronRight, LogOut, Wallet
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { getInitials } from '../../lib/utils'
@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { to: '/reminders', label: 'Reminders', icon: Bell },
   { to: '/fees', label: 'Fees', icon: CreditCard },
   { to: '/reports', label: 'Reports', icon: BarChart2 },
+  { to: '/expenses', label: 'Expenses', icon: Wallet },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
 

@@ -12,6 +12,7 @@ import { StudentProfilePage } from './pages/students/StudentProfilePage'
 import { RemindersPage } from './pages/reminders/RemindersPage'
 import { FeesPage } from './pages/fees/FeesPage'
 import { ReportsPage } from './pages/reports/ReportsPage'
+import { ExpensesPage } from './pages/expenses/ExpensesPage'
 import { SettingsPage } from './pages/settings/SettingsPage'
 
 function AppRouter() {
@@ -30,6 +31,7 @@ function AppRouter() {
         <Route path="/reminders" element={<RemindersPage />} />
         <Route path="/fees" element={<FeesPage />} />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/expenses" element={<ExpensesPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
