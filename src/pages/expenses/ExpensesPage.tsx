@@ -158,10 +158,8 @@ export function ExpensesPage() {
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">
                     {expense.title}
                   </h3>
-                  <p className="text-xs text-gray-500 dark:text-slate-400 flex items-center gap-2">
-                    <span className="capitalize text-brand-600 dark:text-brand-400 font-medium">{expense.category}</span>
-                    <span>·</span>
-                    <span>{new Date(expense.expense_date).toLocaleDateString()}</span>
+                  <p className="text-xs text-gray-500 dark:text-slate-400">
+                    {new Date(expense.expense_date).toLocaleDateString()}
                   </p>
                   {expense.notes && (
                     <p className="text-xs text-gray-400 dark:text-slate-500 truncate mt-1">

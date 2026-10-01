@@ -27,14 +27,19 @@ export function ExpenseForm({ initial, onSubmit, onCancel, loading }: ExpenseFor
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="form-label">Expense Title</label>
-        <input
-          type="text"
-          required
+        <select
           className="form-input"
-          placeholder="e.g. Electricity Bill, Rent"
-          value={formData.title}
-          onChange={e => setFormData(f => ({ ...f, title: e.target.value }))}
-        />
+          value={formData.title || 'Rent'}
+          onChange={e => setFormData(f => ({ ...f, title: e.target.value, category: e.target.value }))}
+        >
+          <option value="Rent">Rent</option>
+          <option value="Electricity">Electricity</option>
+          <option value="Maintenance">Maintenance</option>
+          <option value="Equipment">Equipment</option>
+          <option value="Salary">Salary</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Other">Other</option>
+        </select>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -59,23 +64,6 @@ export function ExpenseForm({ initial, onSubmit, onCancel, loading }: ExpenseFor
             onChange={e => setFormData(f => ({ ...f, expense_date: e.target.value }))}
           />
         </div>
-      </div>
-
-      <div>
-        <label className="form-label">Category</label>
-        <select
-          className="form-input"
-          value={formData.category}
-          onChange={e => setFormData(f => ({ ...f, category: e.target.value }))}
-        >
-          <option value="rent">Rent</option>
-          <option value="electricity">Electricity</option>
-          <option value="maintenance">Maintenance</option>
-          <option value="equipment">Equipment</option>
-          <option value="salary">Salary</option>
-          <option value="marketing">Marketing</option>
-          <option value="other">Other</option>
-        </select>
       </div>
 
       <div>
