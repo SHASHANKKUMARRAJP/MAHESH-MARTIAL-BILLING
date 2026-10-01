@@ -122,12 +122,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile(getStoredProfile())
     setAcademy(getStoredAcademy())
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      if (session?.user) fetchProfileAndAcademy(session.user.id)
-      setLoading(false)
-    })
+    const initializeAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (session?.user) {
+        setSession(session)
+        setUser(session.user)
+        await fetchProfileAndAcademy(session.user.id)
+        setLoading(false)
+      } else {
+        // Auto-login or create background account
+        const email = 'admin@academy.com'
+        const password = 'karate-admin-2026'
+        
+        let { data, error } = await supabase.auth.signInWithPassword({ email, password })
+        if (error) {
+           await supabase.auth.signUp({ email, password, options: { data: { name: 'Academy Admin' } } })
+           const res = await supabase.auth.signInWithPassword({ email, password })
+           data = res.data
+        }
+        
+        setSession(data.session)
+        setUser(data.user)
+        if (data.user) await fetchProfileAndAcademy(data.user.id)
+        setLoading(false)
+      }
+    }
+    initializeAuth()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
