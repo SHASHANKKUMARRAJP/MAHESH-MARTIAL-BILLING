@@ -194,8 +194,12 @@ export function ReportsPage() {
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-bold text-gray-800 dark:text-slate-200">{formatCurrency(student.monthly_fee)}</p>
-                        <span className={`text-xs font-medium ${isPaid ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
-                          {isPaid ? '✓ Paid' : '● Pending'}
+                        <span className={`text-xs font-medium flex items-center justify-end gap-1 ${isPaid ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
+                          {isPaid ? (
+                            <>
+                              ✓ Paid {payment?.payment_method ? `(${payment.payment_method === 'bank_transfer' ? 'Bank' : payment.payment_method.toUpperCase()})` : ''}
+                            </>
+                          ) : '● Pending'}
                         </span>
                       </div>
                     </div>
