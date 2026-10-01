@@ -153,7 +153,7 @@ export function getInitials(name: string): string {
     .toUpperCase()
 }
 
-export function debounce<T extends (...args: unknown[]) => void>(
+export function debounce<T extends (...args: any[]) => void>(
   fn: T,
   ms: number
 ): (...args: Parameters<T>) => void {
