@@ -1,0 +1,17 @@
+{
+  "short_name": "Karate Billing",
+  "name": "Mahesh Martial Arts - Karate Manager",
+  "icons": [
+    {
+      "src": "/karate-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#ea580c",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/"
+}
