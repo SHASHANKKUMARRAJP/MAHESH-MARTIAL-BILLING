@@ -91,7 +91,7 @@ export function StudentsPage() {
     setFormLoading(true)
     const { error } = await addStudent(data)
     setFormLoading(false)
-    if (error) showToast('error', 'Failed to add student.')
+    if (error) showToast('error', `Failed to add student: ${error}`)
     else { showToast('success', 'Student added!'); setAddOpen(false) }
   }
 

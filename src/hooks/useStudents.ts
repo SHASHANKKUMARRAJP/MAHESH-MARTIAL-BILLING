@@ -70,7 +70,11 @@ export function useStudents() {
   }, [fetchStudents])
 
   const addStudent = async (formData: StudentFormData): Promise<{ error: string | null }> => {
-    const academyId = academy?.id ?? 'demo-academy'
+    const academyId = academy?.id
+    if (!academyId || academyId === 'demo-academy') {
+      return { error: 'Academy profile not loaded. Try refreshing the page.' }
+    }
+    
     const normalized = formData.parent_phone.replace(/\D/g, '')
     const phone = normalized.length === 10 ? `91${normalized}` : normalized
 
