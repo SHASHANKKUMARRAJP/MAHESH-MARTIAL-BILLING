@@ -39,7 +39,13 @@ export function useStudents() {
     }
 
     try {
-      const academyId = academy?.id ?? 'demo-academy'
+      const academyId = academy?.id
+      if (!academyId || academyId === 'demo-academy') {
+        setStudents([])
+        setLoading(false)
+        return
+      }
+
       const { data, error: err } = await supabase
         .from('students')
         .select('*')
@@ -47,14 +53,14 @@ export function useStudents() {
         .order('student_name')
 
       if (err) {
-        demoStudents = getStoredStudents()
-        setStudents([...demoStudents])
+        setError(err.message)
+        setStudents([])
       } else {
         setStudents((data as Student[]) || [])
       }
-    } catch {
-      demoStudents = getStoredStudents()
-      setStudents([...demoStudents])
+    } catch (e: any) {
+      setError(e.message)
+      setStudents([])
     }
     setLoading(false)
   }, [academy])
@@ -103,20 +109,12 @@ export function useStudents() {
       })
 
       if (err) {
-        console.warn('Supabase insert failed, saving locally:', err.message)
-        demoStudents = [newStudent, ...demoStudents]
-        saveStoredStudents(demoStudents)
-        setStudents([...demoStudents])
-        return { error: null }
+        return { error: err.message }
       }
       await fetchStudents()
       return { error: null }
-    } catch (e) {
-      console.warn('Network error when adding student, saving locally:', e)
-      demoStudents = [newStudent, ...demoStudents]
-      saveStoredStudents(demoStudents)
-      setStudents([...demoStudents])
-      return { error: null }
+    } catch (e: any) {
+      return { error: e.message }
     }
   }
 
