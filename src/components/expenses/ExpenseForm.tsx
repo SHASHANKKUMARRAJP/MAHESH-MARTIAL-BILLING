@@ -27,19 +27,24 @@ export function ExpenseForm({ initial, onSubmit, onCancel, loading }: ExpenseFor
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="form-label">Expense Title</label>
-        <select
+        <input
+          type="text"
+          required
+          list="expense-suggestions"
           className="form-input"
-          value={formData.title || 'Rent'}
+          placeholder="e.g. Electricity Bill, Rent"
+          value={formData.title}
           onChange={e => setFormData(f => ({ ...f, title: e.target.value, category: e.target.value }))}
-        >
-          <option value="Rent">Rent</option>
-          <option value="Electricity">Electricity</option>
-          <option value="Maintenance">Maintenance</option>
-          <option value="Equipment">Equipment</option>
-          <option value="Salary">Salary</option>
-          <option value="Marketing">Marketing</option>
-          <option value="Other">Other</option>
-        </select>
+        />
+        <datalist id="expense-suggestions">
+          <option value="Rent" />
+          <option value="Electricity" />
+          <option value="Maintenance" />
+          <option value="Equipment" />
+          <option value="Salary" />
+          <option value="Marketing" />
+          <option value="Other" />
+        </datalist>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
