@@ -20,7 +20,7 @@ const BOTTOM_NAV = [
   { to: '/', label: 'Home', icon: LayoutDashboard },
   { to: '/students', label: 'Students', icon: Users },
   { to: '/reminders', label: 'Remind', icon: Bell },
-  { to: '/fees', label: 'Fees', icon: CreditCard },
+  { to: '/reports', label: 'Reports', icon: BarChart2 },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
 
