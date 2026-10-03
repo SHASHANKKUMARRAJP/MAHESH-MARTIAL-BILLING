@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { Bell, MessageCircle, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useStudents } from '../../hooks/useStudents'
 import { usePayments } from '../../hooks/usePayments'
@@ -19,6 +19,7 @@ export function RemindersPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [reminderModal, setReminderModal] = useState(false)
   const [reminderQueue, setReminderQueue] = useState<ReminderQueueItem[]>([])
+  const [hasAutoSelected, setHasAutoSelected] = useState(false)
 
   const { students, loading: studentsLoading } = useStudents()
   const { payments, loading: paymentsLoading } = usePayments(month, year)
@@ -34,6 +35,21 @@ export function RemindersPage() {
       return !p || p.status === 'pending'
     })
   }, [activeStudents, payments])
+
+  // Reset auto-select flag when month/year changes
+  useEffect(() => {
+    setHasAutoSelected(false)
+  }, [month, year])
+
+  // Auto-select pending students once data is loaded
+  useEffect(() => {
+    if (!studentsLoading && !paymentsLoading && !hasAutoSelected) {
+      if (pendingStudents.length > 0) {
+        setSelected(new Set(pendingStudents.map(s => s.id)))
+      }
+      setHasAutoSelected(true)
+    }
+  }, [studentsLoading, paymentsLoading, hasAutoSelected, pendingStudents])
 
   const navigateMonth = (dir: 1 | -1) => {
     let m = month + dir
