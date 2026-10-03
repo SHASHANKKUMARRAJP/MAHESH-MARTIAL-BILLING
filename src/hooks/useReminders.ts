@@ -4,10 +4,12 @@ import { useAuth } from '../contexts/AuthContext'
 import type { Reminder } from '../types'
 import { DEMO_REMINDERS } from '../lib/demoData'
 import { generateId } from '../lib/utils'
+import { getBranchPrefix } from '../lib/branch'
 
 function getStoredReminders(): Reminder[] {
   try {
-    const data = localStorage.getItem('karate_reminders')
+    const prefix = getBranchPrefix()
+    const data = localStorage.getItem(`${prefix}_reminders`)
     if (data) return JSON.parse(data)
   } catch {}
   return [...DEMO_REMINDERS]
@@ -15,7 +17,8 @@ function getStoredReminders(): Reminder[] {
 
 function saveStoredReminders(reminders: Reminder[]) {
   try {
-    localStorage.setItem('karate_reminders', JSON.stringify(reminders))
+    const prefix = getBranchPrefix()
+    localStorage.setItem(`${prefix}_reminders`, JSON.stringify(reminders))
   } catch {}
 }
 

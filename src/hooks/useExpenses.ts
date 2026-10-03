@@ -3,10 +3,12 @@ import { supabase, isDemoMode } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import type { Expense, ExpenseFormData } from '../types'
 import { generateId } from '../lib/utils'
+import { getBranchPrefix } from '../lib/branch'
 
 function getStoredExpenses(): Expense[] {
   try {
-    const data = localStorage.getItem('karate_expenses')
+    const prefix = getBranchPrefix()
+    const data = localStorage.getItem(`${prefix}_expenses`)
     if (data) return JSON.parse(data)
   } catch {}
   return []
@@ -14,7 +16,8 @@ function getStoredExpenses(): Expense[] {
 
 function saveStoredExpenses(expenses: Expense[]) {
   try {
-    localStorage.setItem('karate_expenses', JSON.stringify(expenses))
+    const prefix = getBranchPrefix()
+    localStorage.setItem(`${prefix}_expenses`, JSON.stringify(expenses))
   } catch {}
 }
 

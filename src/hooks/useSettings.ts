@@ -4,10 +4,12 @@ import { useAuth } from '../contexts/AuthContext'
 import type { Settings } from '../types'
 import { DEMO_SETTINGS, DEMO_ACADEMY } from '../lib/demoData'
 import { DEFAULT_WHATSAPP_TEMPLATE } from '../lib/utils'
+import { getBranchPrefix } from '../lib/branch'
 
 function getStoredSettings(): Settings {
   try {
-    const data = localStorage.getItem('karate_settings')
+    const prefix = getBranchPrefix()
+    const data = localStorage.getItem(`${prefix}_settings`)
     if (data) return JSON.parse(data)
   } catch {}
   return { ...DEMO_SETTINGS }
@@ -15,7 +17,8 @@ function getStoredSettings(): Settings {
 
 function saveStoredSettings(s: Settings) {
   try {
-    localStorage.setItem('karate_settings', JSON.stringify(s))
+    const prefix = getBranchPrefix()
+    localStorage.setItem(`${prefix}_settings`, JSON.stringify(s))
   } catch {}
 }
 

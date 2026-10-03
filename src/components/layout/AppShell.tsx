@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { getInitials } from '../../lib/utils'
+import { clearActiveBranch, getActiveBranch } from '../../lib/branch'
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -42,14 +43,17 @@ export function AppShell({ children }: AppShellProps) {
           <div className="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
             🥋
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <h1 className="font-bold text-gray-900 dark:text-slate-100 text-sm truncate">
               {academy?.name ?? 'Karate Academy'}
             </h1>
-            <p className="text-xs text-gray-400 dark:text-slate-500 truncate">
-              {isDemoMode ? 'Demo Mode' : 'Manager'}
+            <p className="text-xs text-gray-400 dark:text-slate-500 truncate uppercase">
+              {getActiveBranch()?.replace('branch', 'Branch ')}
             </p>
           </div>
+          <button onClick={clearActiveBranch} className="text-xs text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-2 py-1 rounded">
+            Switch
+          </button>
         </div>
 
         {/* Nav */}

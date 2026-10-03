@@ -15,6 +15,9 @@ import { ReportsPage } from './pages/reports/ReportsPage'
 import { ExpensesPage } from './pages/expenses/ExpensesPage'
 import { SettingsPage } from './pages/settings/SettingsPage'
 
+import { BranchSelector } from './pages/BranchSelector'
+import { getActiveBranch } from './lib/branch'
+
 function AppRouter() {
   const { loading } = useAuth()
 
@@ -40,6 +43,10 @@ function AppRouter() {
 }
 
 export default function App() {
+  if (!getActiveBranch()) {
+    return <BranchSelector />
+  }
+
   return (
     <ThemeProvider>
       <ToastProvider>

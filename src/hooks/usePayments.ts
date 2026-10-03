@@ -4,10 +4,12 @@ import { useAuth } from '../contexts/AuthContext'
 import type { Payment, PaymentFormData } from '../types'
 import { DEMO_PAYMENTS } from '../lib/demoData'
 import { generateId, getCurrentMonth } from '../lib/utils'
+import { getBranchPrefix } from '../lib/branch'
 
 function getStoredPayments(): Payment[] {
   try {
-    const data = localStorage.getItem('karate_payments')
+    const prefix = getBranchPrefix()
+    const data = localStorage.getItem(`${prefix}_payments`)
     if (data) return JSON.parse(data)
   } catch {}
   return [...DEMO_PAYMENTS]
@@ -15,7 +17,8 @@ function getStoredPayments(): Payment[] {
 
 function saveStoredPayments(payments: Payment[]) {
   try {
-    localStorage.setItem('karate_payments', JSON.stringify(payments))
+    const prefix = getBranchPrefix()
+    localStorage.setItem(`${prefix}_payments`, JSON.stringify(payments))
   } catch {}
 }
 
@@ -23,7 +26,8 @@ let demoPayments = getStoredPayments()
 
 function getStoredStudents() {
   try {
-    const data = localStorage.getItem('karate_students')
+    const prefix = getBranchPrefix()
+    const data = localStorage.getItem(`${prefix}_students`)
     if (data) return JSON.parse(data)
   } catch {}
   return []

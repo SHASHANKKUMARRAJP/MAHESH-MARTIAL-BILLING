@@ -4,10 +4,12 @@ import { useAuth } from '../contexts/AuthContext'
 import type { Student, StudentFormData } from '../types'
 import { DEMO_STUDENTS } from '../lib/demoData'
 import { generateId } from '../lib/utils'
+import { getBranchPrefix } from '../lib/branch'
 
 function getStoredStudents(): Student[] {
   try {
-    const data = localStorage.getItem('karate_students')
+    const prefix = getBranchPrefix()
+    const data = localStorage.getItem(`${prefix}_students`)
     if (data) return JSON.parse(data)
   } catch {}
   return [...DEMO_STUDENTS]
@@ -15,7 +17,8 @@ function getStoredStudents(): Student[] {
 
 function saveStoredStudents(students: Student[]) {
   try {
-    localStorage.setItem('karate_students', JSON.stringify(students))
+    const prefix = getBranchPrefix()
+    localStorage.setItem(`${prefix}_students`, JSON.stringify(students))
   } catch {}
 }
 
