@@ -94,8 +94,28 @@ export function AppShell({ children }: AppShellProps) {
         </div>
       </aside>
 
+      {/* Top Header — mobile only */}
+      <header className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-100 dark:border-slate-800 px-4 pb-3 flex items-center justify-between pt-[calc(env(safe-area-inset-top)+16px)]">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm">
+            🥋
+          </div>
+          <div className="flex flex-col">
+            <h1 className="font-bold text-gray-900 dark:text-slate-100 text-[15px] leading-tight">
+              {academy?.name ?? 'Karate Academy'}
+            </h1>
+            <p className="text-[11px] text-brand-600 dark:text-brand-400 uppercase tracking-wide leading-tight font-bold mt-0.5">
+              {getActiveBranch()?.replace('branch', 'Branch ')}
+            </p>
+          </div>
+        </div>
+        <button onClick={clearActiveBranch} className="text-xs text-brand-700 font-bold bg-brand-100 hover:bg-brand-200 dark:bg-brand-900/40 dark:text-brand-300 dark:hover:bg-brand-900/60 px-3 py-1.5 rounded-lg active:scale-95 transition-all">
+          Switch
+        </button>
+      </header>
+
       {/* Main content */}
-      <main className="flex-1 md:ml-64 min-h-screen">
+      <main className="flex-1 md:ml-64 min-h-screen pb-20 md:pb-0 pt-[calc(env(safe-area-inset-top)+80px)] md:pt-0">
         {children}
       </main>
 
