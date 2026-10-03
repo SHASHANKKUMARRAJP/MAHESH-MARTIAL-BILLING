@@ -48,7 +48,12 @@ export function useExpenses() {
       if (error) {
         setExpenses(getStoredExpenses())
       } else {
-        setExpenses((data as Expense[]) || [])
+        const branch = getActiveBranch() || 'branch1'
+        const filtered = (data as Expense[]).filter(e => {
+          if (!e.notes || !e.notes.startsWith('[')) return branch === 'branch1' // Legacy fallback
+          return e.notes.startsWith(`[${branch}]`)
+        })
+        setExpenses(filtered)
       }
     } catch {
       setExpenses(getStoredExpenses())
@@ -66,9 +71,11 @@ export function useExpenses() {
       return { error: 'Academy profile not loaded. Try refreshing the page.' }
     }
 
+    const branch = getActiveBranch() || 'branch1'
     const newExpense: Omit<Expense, 'id' | 'created_at'> = {
       academy_id: academyId,
-      ...formData
+      ...formData,
+      notes: `[${branch}] ${formData.notes || ''}`.trim()
     }
 
     if (isDemoMode) {
@@ -98,7 +105,11 @@ export function useExpenses() {
       return { error: null }
     }
 
-    const { error } = await supabase.from('expenses').update(formData).eq('id', id)
+    const branch = getActiveBranch() || 'branch1'
+    const { error } = await supabase.from('expenses').update({
+      ...formData,
+      notes: `[${branch}] ${formData.notes || ''}`.trim()
+    }).eq('id', id)
     if (error) return { error: error.message }
 
     await fetchExpenses()

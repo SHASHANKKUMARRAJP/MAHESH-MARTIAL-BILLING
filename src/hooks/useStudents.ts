@@ -59,7 +59,12 @@ export function useStudents() {
         setError(err.message)
         setStudents([])
       } else {
-        setStudents((data as Student[]) || [])
+        const branch = getActiveBranch() || 'branch1'
+        const filtered = (data as Student[]).filter(s => {
+          const sBranch = s.photo_url || 'branch1'
+          return sBranch === branch
+        })
+        setStudents(filtered)
       }
     } catch (e: any) {
       setError(e.message)
@@ -104,6 +109,7 @@ export function useStudents() {
     }
 
     try {
+      const branch = getActiveBranch() || 'branch1'
       const { error: err } = await supabase.from('students').insert({
         academy_id: academyId,
         student_name: newStudent.student_name,
@@ -113,6 +119,7 @@ export function useStudents() {
         batch: newStudent.batch,
         joining_date: newStudent.joining_date,
         status: newStudent.status,
+        photo_url: branch,
       })
 
       if (err) {
@@ -145,9 +152,10 @@ export function useStudents() {
       updateData.parent_phone = normalizePhone(formData.parent_phone)
     }
 
+    const branch = getActiveBranch() || 'branch1'
     const { error: err } = await supabase
       .from('students')
-      .update(updateData)
+      .update({ ...updateData, photo_url: branch })
       .eq('id', id)
 
     if (err) return { error: err.message }
