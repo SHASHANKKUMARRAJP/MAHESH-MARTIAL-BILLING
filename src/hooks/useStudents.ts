@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import type { Student, StudentFormData } from '../types'
 import { DEMO_STUDENTS } from '../lib/demoData'
 import { generateId } from '../lib/utils'
-import { getBranchPrefix } from '../lib/branch'
+import { getBranchPrefix, getActiveBranch } from '../lib/branch'
 
 function getStoredStudents(): Student[] {
   try {

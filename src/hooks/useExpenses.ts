@@ -3,7 +3,7 @@ import { supabase, isDemoMode } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import type { Expense, ExpenseFormData } from '../types'
 import { generateId } from '../lib/utils'
-import { getBranchPrefix } from '../lib/branch'
+import { getBranchPrefix, getActiveBranch } from '../lib/branch'
 
 function getStoredExpenses(): Expense[] {
   try {
