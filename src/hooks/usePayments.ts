@@ -12,7 +12,7 @@ function getStoredPayments(): Payment[] {
     const data = localStorage.getItem(`${prefix}_payments`)
     if (data) return JSON.parse(data)
   } catch {}
-  return [...DEMO_PAYMENTS]
+  return []
 }
 
 function saveStoredPayments(payments: Payment[]) {

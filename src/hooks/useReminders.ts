@@ -12,7 +12,7 @@ function getStoredReminders(): Reminder[] {
     const data = localStorage.getItem(`${prefix}_reminders`)
     if (data) return JSON.parse(data)
   } catch {}
-  return [...DEMO_REMINDERS]
+  return []
 }
 
 function saveStoredReminders(reminders: Reminder[]) {

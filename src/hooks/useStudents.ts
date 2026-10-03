@@ -12,7 +12,7 @@ function getStoredStudents(): Student[] {
     const data = localStorage.getItem(`${prefix}_students`)
     if (data) return JSON.parse(data)
   } catch {}
-  return [...DEMO_STUDENTS]
+  return []
 }
 
 function saveStoredStudents(students: Student[]) {
