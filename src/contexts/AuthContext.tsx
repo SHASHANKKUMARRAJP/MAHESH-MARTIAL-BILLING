@@ -180,6 +180,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
+    sessionStorage.removeItem('karate_active_branch')
     if (isDemoMode) {
       setUser(null)
       return
