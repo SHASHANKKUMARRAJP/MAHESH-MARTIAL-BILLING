@@ -26,33 +26,33 @@ export function BranchSelector() {
       {/* Central Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-900/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
 
-      <div className="text-center mb-12 animate-fade-in-up relative z-10">
-        <div className="relative inline-block mb-6 group">
+      <div className="text-center mb-8 md:mb-12 animate-fade-in-up relative z-10">
+        <div className="relative inline-block mb-4 md:mb-6 group">
           <div className="absolute inset-[-4px] bg-gradient-to-r from-red-600 to-brand-500 rounded-3xl opacity-50 blur-lg group-hover:opacity-100 transition-opacity duration-500"></div>
           <img 
             src="/logo.png.jpeg" 
             alt="Logo" 
-            className="w-28 h-28 object-contain rounded-2xl relative z-10 bg-black border border-white/10" 
+            className="w-20 h-20 md:w-28 md:h-28 object-contain rounded-2xl relative z-10 bg-black border border-white/10" 
           />
         </div>
-        <h1 className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight uppercase">
+        <h1 className="text-3xl md:text-5xl font-black text-white mb-2 tracking-tight uppercase px-2">
           Mahesh Martial Arts
         </h1>
-        <div className="h-1.5 w-24 bg-gradient-to-r from-red-600 to-brand-500 mx-auto mt-4 rounded-full" />
+        <div className="h-1.5 w-16 md:w-24 bg-gradient-to-r from-red-600 to-brand-500 mx-auto mt-3 md:mt-4 rounded-full" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full relative z-10 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl w-full relative z-10 px-4">
         {branches.map((branch) => (
           <button
             key={branch.id}
             onClick={() => setActiveBranch(branch.id)}
-            className="group animate-fade-in-up flex flex-col items-center justify-center gap-6 p-10 bg-white/5 hover:bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 hover:border-red-500/50 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(220,38,38,0.4)] transition-all duration-300"
+            className="group animate-fade-in-up flex flex-col items-center justify-center gap-4 md:gap-6 p-6 md:p-10 bg-white/5 hover:bg-white/10 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-white/10 hover:border-red-500/50 hover:-translate-y-1 md:hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(220,38,38,0.4)] transition-all duration-300"
             style={{ animationDelay: branch.delay }}
           >
-            <div className="text-6xl group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-500 drop-shadow-2xl">
+            <div className="text-5xl md:text-6xl group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-500 drop-shadow-2xl">
               {branch.icon}
             </div>
-            <h2 className="text-2xl font-bold text-gray-300 group-hover:text-white transition-colors duration-300">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-300 group-hover:text-white transition-colors duration-300">
               {branch.name}
             </h2>
           </button>
