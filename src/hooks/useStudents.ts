@@ -78,8 +78,8 @@ export function useStudents() {
   }, [fetchStudents])
 
   const addStudent = async (formData: StudentFormData): Promise<{ error: string | null }> => {
-    const academyId = academy?.id
-    if (!academyId || academyId === 'demo-academy') {
+    const academyId = academy?.id || 'demo-academy'
+    if (!isDemoMode && academyId === 'demo-academy') {
       return { error: 'Academy profile not loaded. Try refreshing the page.' }
     }
     

@@ -115,18 +115,42 @@ Thank you 🙏
 
 Karate Academy`
 
+export const DEFAULT_COMPETITION_TEMPLATE = `🥋 Karate Academy Competition Reminder
+
+Dear {{parent_name}},
+
+This is a gentle reminder regarding the upcoming karate competition for {{student_name}}. Please contact us for further details and to confirm participation.
+
+💰 Competition Fee: ₹{{amount}}
+
+Thank you 🙏
+
+Karate Academy`
+
+export const DEFAULT_MANUAL_TEMPLATE = `Dear {{parent_name}},
+
+Type your custom message here regarding {{student_name}}...
+
+💰 Amount: ₹{{amount}}
+
+Thank you 🙏
+
+Karate Academy`
+
 export function buildWhatsAppMessage(
   template: string,
   student: Student,
   month: number,
-  year: number
+  year: number,
+  customAmount?: number
 ): string {
+  const amount = customAmount !== undefined ? customAmount : student.monthly_fee;
   return template
     .replace(/{{parent_name}}/g, student.parent_name)
     .replace(/{{student_name}}/g, student.student_name)
     .replace(/{{month}}/g, MONTH_NAMES[month - 1])
     .replace(/{{year}}/g, String(year))
-    .replace(/{{amount}}/g, String(student.monthly_fee))
+    .replace(/{{amount}}/g, String(amount))
     .replace(/{{academy_name}}/g, 'Karate Academy')
 }
 

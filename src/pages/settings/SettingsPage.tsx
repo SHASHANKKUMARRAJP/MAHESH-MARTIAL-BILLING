@@ -26,7 +26,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export function SettingsPage() {
   const { academy, profile, updateAcademy, updateProfile } = useAuth()
-  const { settings, loading, updateSettings, updateAcademyInfo, whatsappTemplate } = useSettings()
+  const { settings, loading, updateSettings, updateAcademyInfo, whatsappTemplate, competitionTemplate, manualTemplate, competitionFee, manualFee } = useSettings()
   const { theme, setTheme } = useTheme()
   const { showToast } = useToast()
 
@@ -41,38 +41,44 @@ export function SettingsPage() {
     name: profile?.name ?? 'Sensei Mahesh',
   })
 
-  const [feeForm, setFeeForm] = useState({ default_fee: settings?.default_fee ?? 800 })
-  const [templateForm, setTemplateForm] = useState({ whatsapp_template: whatsappTemplate })
-  const [templateOpen, setTemplateOpen] = useState(false)
+  const [feeForm, setFeeForm] = useState({ 
+    default_fee: String(settings?.default_fee ?? 800),
+    competition_fee: String(settings?.competition_fee ?? 0),
+    manual_fee: String(settings?.manual_fee ?? 0)
+  })
+  const [currentTemplate, setCurrentTemplate] = useState('')
+  const [templateOpen, setTemplateOpen] = useState<'none' | 'fees' | 'competition' | 'manual'>('none')
   const [clearDialogOpen, setClearDialogOpen] = useState(false)
   const [saving, setSaving] = useState<string | null>(null)
 
-  const initialized = useRef(false)
+  useEffect(() => {
+    if (academy) {
+      setAcademyForm({
+        name: academy.name ?? '',
+        instructor_name: academy.instructor_name ?? '',
+        phone: academy.phone ?? '',
+        address: academy.address ?? '',
+      })
+    }
+  }, [academy])
 
   useEffect(() => {
-    if (!initialized.current && (academy || profile || settings || whatsappTemplate)) {
-      if (academy) {
-        setAcademyForm({
-          name: academy.name ?? '',
-          instructor_name: academy.instructor_name ?? '',
-          phone: academy.phone ?? '',
-          address: academy.address ?? '',
-        })
-      }
-      if (profile) {
-        setProfileForm({
-          name: profile.name ?? '',
-        })
-      }
-      if (settings) {
-        setFeeForm({ default_fee: settings.default_fee ?? 800 })
-      }
-      if (whatsappTemplate) {
-        setTemplateForm({ whatsapp_template: whatsappTemplate })
-      }
-      initialized.current = true
+    if (profile) {
+      setProfileForm({
+        name: profile.name ?? '',
+      })
     }
-  }, [academy, profile, settings, whatsappTemplate])
+  }, [profile])
+
+  useEffect(() => {
+    if (settings) {
+      setFeeForm({ 
+        default_fee: String(settings.default_fee ?? 800),
+        competition_fee: String(settings.competition_fee ?? 0),
+        manual_fee: String(settings.manual_fee ?? 0)
+      })
+    }
+  }, [settings])
 
   const handleSaveAcademy = async () => {
     setSaving('academy')
@@ -91,17 +97,24 @@ export function SettingsPage() {
 
   const handleSaveFee = async () => {
     setSaving('fee')
-    await updateSettings({ default_fee: feeForm.default_fee })
+    await updateSettings({ 
+      default_fee: Number(feeForm.default_fee) || 0,
+      competition_fee: Number(feeForm.competition_fee) || 0,
+      manual_fee: Number(feeForm.manual_fee) || 0
+    })
     setSaving(null)
-    showToast('success', 'Default monthly fee updated!')
+    showToast('success', 'Default fees updated!')
   }
 
   const handleSaveTemplate = async () => {
     setSaving('template')
-    await updateSettings({ whatsapp_template: templateForm.whatsapp_template })
+    if (templateOpen === 'fees') await updateSettings({ whatsapp_template: currentTemplate })
+    else if (templateOpen === 'competition') await updateSettings({ competition_template: currentTemplate })
+    else if (templateOpen === 'manual') await updateSettings({ manual_template: currentTemplate })
+    
     setSaving(null)
     showToast('success', 'WhatsApp template saved!')
-    setTemplateOpen(false)
+    setTemplateOpen('none')
   }
 
   const handleClearAllData = () => {
@@ -211,45 +224,79 @@ export function SettingsPage() {
           </button>
         </Section>
 
-        {/* Default Fee */}
-        <Section title="Default Monthly Fee">
-          <div>
-            <label className="form-label">Standard Fee Amount</label>
-            <div className="flex">
-              <span className="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-slate-400 text-sm font-semibold">₹</span>
-              <input
-                type="number"
-                className="form-input rounded-l-none"
-                value={feeForm.default_fee}
-                min={1}
-                onChange={e => setFeeForm({ default_fee: Number(e.target.value) })}
-              />
+        {/* Default Fees */}
+        <Section title="Default Fee Amounts">
+          <div className="space-y-4">
+            <div>
+              <label className="form-label">Default Competition Fee</label>
+              <div className="flex">
+                <span className="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-slate-400 text-sm font-semibold">₹</span>
+                <input
+                  type="number"
+                  className="form-input rounded-l-none"
+                  value={feeForm.competition_fee}
+                  min={0}
+                  onChange={e => {
+                    const val = e.target.value;
+                    setFeeForm(f => ({ ...f, competition_fee: val === '' ? '' : String(Number(val)) }));
+                  }}
+                />
+              </div>
+              <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">Amount for competition reminder ({"{{amount}}"})</p>
             </div>
-            <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">Pre-filled default when adding new students</p>
+
+            <div>
+              <label className="form-label">Default Manual Entry Amount</label>
+              <div className="flex">
+                <span className="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-slate-400 text-sm font-semibold">₹</span>
+                <input
+                  type="number"
+                  className="form-input rounded-l-none"
+                  value={feeForm.manual_fee}
+                  min={0}
+                  onChange={e => {
+                    const val = e.target.value;
+                    setFeeForm(f => ({ ...f, manual_fee: val === '' ? '' : String(Number(val)) }));
+                  }}
+                />
+              </div>
+              <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">Amount for manual reminder ({"{{amount}}"})</p>
+            </div>
           </div>
-          <button onClick={handleSaveFee} disabled={saving === 'fee'} className="btn-primary w-full">
-            {saving === 'fee' ? 'Saving...' : 'Save Default Fee'}
+          <button onClick={handleSaveFee} disabled={saving === 'fee'} className="btn-primary w-full mt-4">
+            {saving === 'fee' ? 'Saving...' : 'Save Default Fees'}
           </button>
         </Section>
 
-        {/* WhatsApp Template */}
-        <Section title="WhatsApp Message Template">
-          <button
-            onClick={() => {
-              setTemplateForm({ whatsapp_template: whatsappTemplate })
-              setTemplateOpen(true)
-            }}
-            className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <MessageCircle className="w-5 h-5 text-[#25D366]" />
-              <div className="text-left">
-                <span className="text-sm font-medium text-gray-800 dark:text-slate-200 block">Edit WhatsApp Message Template</span>
-                <span className="text-xs text-gray-400 dark:text-slate-500">Customize reminder text sent to parents</span>
-              </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-          </button>
+        {/* WhatsApp Templates */}
+        <Section title="WhatsApp Message Templates">
+          <div className="space-y-3">
+            {[
+              { id: 'fees', title: 'Fee Reminder Template', desc: 'Customize reminder text sent to parents for monthly fees' },
+              { id: 'competition', title: 'Competition Template', desc: 'Customize reminder text for upcoming competitions' },
+              { id: 'manual', title: 'Manual Entry Template', desc: 'Customize the default text for manual entry messages' }
+            ].map(tpl => (
+              <button
+                key={tpl.id}
+                onClick={() => {
+                  if (tpl.id === 'fees') setCurrentTemplate(whatsappTemplate)
+                  else if (tpl.id === 'competition') setCurrentTemplate(competitionTemplate)
+                  else if (tpl.id === 'manual') setCurrentTemplate(manualTemplate)
+                  setTemplateOpen(tpl.id as any)
+                }}
+                className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <MessageCircle className="w-5 h-5 text-[#25D366]" />
+                  <div className="text-left">
+                    <span className="text-sm font-medium text-gray-800 dark:text-slate-200 block">{tpl.title}</span>
+                    <span className="text-xs text-gray-400 dark:text-slate-500">{tpl.desc}</span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </button>
+            ))}
+          </div>
         </Section>
 
         {/* Appearance */}
@@ -297,12 +344,12 @@ export function SettingsPage() {
       </div>
 
       {/* Template Modal */}
-      <Modal isOpen={templateOpen} onClose={() => setTemplateOpen(false)} title="Edit WhatsApp Template">
+      <Modal isOpen={templateOpen !== 'none'} onClose={() => setTemplateOpen('none')} title="Edit WhatsApp Template">
         <div className="space-y-4">
           <textarea
             className="form-textarea w-full min-h-[220px] font-sans text-sm"
-            value={templateForm.whatsapp_template}
-            onChange={e => setTemplateForm({ whatsapp_template: e.target.value })}
+            value={currentTemplate}
+            onChange={e => setCurrentTemplate(e.target.value)}
           />
           <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-3">
             <p className="text-xs text-gray-400 dark:text-slate-500 mb-1.5">Click a variable to insert:</p>
@@ -311,7 +358,7 @@ export function SettingsPage() {
                 <button
                   key={v}
                   type="button"
-                  onClick={() => setTemplateForm(f => ({ ...f, whatsapp_template: f.whatsapp_template + ' ' + v }))}
+                  onClick={() => setCurrentTemplate(f => f + ' ' + v)}
                   className="text-xs bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 hover:border-brand-500 rounded px-2 py-1 text-brand-600 dark:text-brand-400 font-mono transition-colors"
                 >
                   {v}
@@ -320,7 +367,7 @@ export function SettingsPage() {
             </div>
           </div>
           <div className="flex gap-3">
-            <button onClick={() => setTemplateOpen(false)} className="btn-secondary flex-1">Cancel</button>
+            <button onClick={() => setTemplateOpen('none')} className="btn-secondary flex-1">Cancel</button>
             <button onClick={handleSaveTemplate} disabled={saving === 'template'} className="btn-primary flex-1">
               {saving === 'template' ? 'Saving...' : 'Save Template'}
             </button>

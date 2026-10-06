@@ -12,6 +12,7 @@ export interface ReminderQueueItem {
   reminderId: string | null
   message: string
   sent: boolean
+  amount: number
 }
 
 interface ReminderModalProps {
@@ -156,7 +157,7 @@ export function ReminderModal({
                 </p>
                 <div className="flex gap-2 mt-2">
                   <span className="badge-pending">
-                    {formatCurrency(current.student.monthly_fee)}
+                    {formatCurrency(current.amount)}
                   </span>
                   <span className="text-xs text-gray-400 dark:text-slate-500 self-center">
                     {formatMonth(month, year)}

@@ -128,6 +128,10 @@ Kindly complete the payment at your convenience.
 Thank you 🙏
 
 Karate Academy',
+  competition_template text,
+  manual_template text,
+  competition_fee numeric default 0,
+  manual_fee numeric default 0,
   created_at          timestamptz default now(),
   updated_at          timestamptz default now()
 );

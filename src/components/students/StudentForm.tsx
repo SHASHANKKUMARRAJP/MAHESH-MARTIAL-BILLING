@@ -3,7 +3,7 @@ import { X } from 'lucide-react'
 import type { StudentFormData, Student } from '../../types'
 import { validateIndianPhone, todayISO } from '../../lib/utils'
 
-const BATCHES = ['Beginners', 'Intermediate', 'Advanced', 'Competition', 'Kids']
+
 
 interface StudentFormProps {
   initial?: Student
@@ -146,18 +146,7 @@ export function StudentForm({ initial, defaultFee = 800, onSubmit, onCancel, loa
         {errors.monthly_fee && <p className="form-error">{errors.monthly_fee}</p>}
       </div>
 
-      <div>
-        <label htmlFor="batch" className="form-label">Batch</label>
-        <select
-          id="batch"
-          className="form-select"
-          value={form.batch}
-          onChange={e => setForm(f => ({ ...f, batch: e.target.value }))}
-        >
-          <option value="">Select batch</option>
-          {BATCHES.map(b => <option key={b} value={b}>{b}</option>)}
-        </select>
-      </div>
+
 
       <div>
         <label htmlFor="joining_date" className="form-label">Joining Date</label>

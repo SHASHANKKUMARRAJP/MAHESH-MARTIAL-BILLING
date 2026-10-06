@@ -71,6 +71,10 @@ export interface Settings {
   academy_id: string
   default_fee: number
   whatsapp_template: string
+  competition_template?: string
+  manual_template?: string
+  competition_fee?: number
+  manual_fee?: number
   created_at: string
   updated_at: string
 }

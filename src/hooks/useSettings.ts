@@ -3,7 +3,7 @@ import { supabase, isDemoMode } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import type { Settings } from '../types'
 import { DEMO_SETTINGS, DEMO_ACADEMY } from '../lib/demoData'
-import { DEFAULT_WHATSAPP_TEMPLATE } from '../lib/utils'
+import { DEFAULT_WHATSAPP_TEMPLATE, DEFAULT_COMPETITION_TEMPLATE, DEFAULT_MANUAL_TEMPLATE } from '../lib/utils'
 import { getBranchPrefix } from '../lib/branch'
 
 function getStoredSettings(): Settings {
@@ -67,7 +67,7 @@ export function useSettings() {
   }, [fetchSettings])
 
   const updateSettings = async (
-    updates: Partial<Pick<Settings, 'default_fee' | 'whatsapp_template'>>
+    updates: Partial<Pick<Settings, 'default_fee' | 'whatsapp_template' | 'competition_template' | 'manual_template' | 'competition_fee' | 'manual_fee'>>
   ): Promise<{ error: string | null }> => {
     demoSettings = { ...demoSettings, ...updates, updated_at: new Date().toISOString() }
     saveStoredSettings(demoSettings)
@@ -107,7 +107,11 @@ export function useSettings() {
     updateSettings,
     updateAcademyInfo,
     whatsappTemplate: settings?.whatsapp_template ?? DEFAULT_WHATSAPP_TEMPLATE,
+    competitionTemplate: settings?.competition_template ?? DEFAULT_COMPETITION_TEMPLATE,
+    manualTemplate: settings?.manual_template ?? DEFAULT_MANUAL_TEMPLATE,
     defaultFee: settings?.default_fee ?? 800,
+    competitionFee: settings?.competition_fee ?? 0,
+    manualFee: settings?.manual_fee ?? 0,
   }
 }
 

@@ -6,6 +6,7 @@ import { useReminders } from '../../hooks/useReminders'
 import { useSettings } from '../../hooks/useSettings'
 import { useToast } from '../../contexts/ToastContext'
 import { ReminderModal, type ReminderQueueItem } from '../../components/ui/ReminderModal'
+import { Modal } from '../../components/ui/Modal'
 import { FeeStatusBadge, ReminderStatusBadge } from '../../components/ui/StatusBadges'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { LoadingState } from '../../components/ui/LoadingState'
@@ -19,12 +20,16 @@ export function RemindersPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [reminderModal, setReminderModal] = useState(false)
   const [reminderQueue, setReminderQueue] = useState<ReminderQueueItem[]>([])
+  const [configModal, setConfigModal] = useState(false)
+  const [reminderType, setReminderType] = useState<'fees' | 'competition' | 'manual'>('fees')
+  const [manualMessage, setManualMessage] = useState('')
+  const [customFeeInput, setCustomFeeInput] = useState('')
   const [hasAutoSelected, setHasAutoSelected] = useState(false)
 
   const { students, loading: studentsLoading } = useStudents()
   const { payments, loading: paymentsLoading } = usePayments(month, year)
   const { reminders, loading: remindersLoading, initiateReminder, confirmReminderSent, fetchReminders } = useReminders(month, year)
-  const { whatsappTemplate } = useSettings()
+  const { whatsappTemplate, competitionTemplate, manualTemplate, competitionFee, manualFee } = useSettings()
   const { showToast } = useToast()
 
   const activeStudents = useMemo(() => students.filter(s => s.status === 'active'), [students])
@@ -78,16 +83,38 @@ export function RemindersPage() {
     }
   }
 
-  const handleSendReminders = async () => {
+  const handleSendReminders = () => {
+    setManualMessage(manualTemplate)
+    setReminderType('fees')
+    setCustomFeeInput('')
+    setConfigModal(true)
+  }
+
+  const handleGenerateQueue = async () => {
     const selectedStudents = pendingStudents.filter(s => selected.has(s.id))
     const queue: ReminderQueueItem[] = []
 
-    for (const student of selectedStudents) {
-      const message = buildWhatsAppMessage(whatsappTemplate, student, month, year)
-      const { reminderId } = await initiateReminder(student.id, student.monthly_fee, message)
-      queue.push({ student, reminderId, message, sent: false })
+    let template = whatsappTemplate
+    let customAmount: number | undefined = undefined
+
+    if (reminderType === 'competition') {
+      template = competitionTemplate
+      customAmount = customFeeInput ? Number(customFeeInput) : competitionFee
+    } else if (reminderType === 'manual') {
+      template = manualMessage
+      customAmount = customFeeInput ? Number(customFeeInput) : manualFee
+    } else if (reminderType === 'fees') {
+      if (customFeeInput) customAmount = Number(customFeeInput)
     }
 
+    for (const student of selectedStudents) {
+      const finalAmount = customAmount !== undefined ? customAmount : student.monthly_fee
+      const message = buildWhatsAppMessage(template, student, month, year, finalAmount)
+      const { reminderId } = await initiateReminder(student.id, finalAmount, message)
+      queue.push({ student, reminderId, message, sent: false, amount: finalAmount })
+    }
+
+    setConfigModal(false)
     setReminderQueue(queue)
     setReminderModal(true)
   }
@@ -256,6 +283,74 @@ export function RemindersPage() {
         onMarkSent={handleMarkSent}
         onCancel={(i) => setReminderQueue(prev => prev.map((q, idx) => idx === i ? { ...q, sent: false } : q))}
       />
+
+      <Modal isOpen={configModal} onClose={() => setConfigModal(false)} title="Configure Reminder">
+        <div className="space-y-4">
+          <div>
+            <label className="form-label">Reminder Type</label>
+            <select
+              className="form-select"
+              value={reminderType}
+              onChange={e => {
+                const type = e.target.value as any;
+                setReminderType(type);
+                if (type === 'competition') setCustomFeeInput(String(competitionFee || ''));
+                else if (type === 'manual') setCustomFeeInput(String(manualFee || ''));
+                else setCustomFeeInput('');
+              }}
+            >
+              <option value="fees">Fees (Default Template)</option>
+              <option value="competition">Competition</option>
+              <option value="manual">Manual Entry</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="form-label">
+              Fee Amount for this Reminder (₹) {reminderType === 'fees' && '(Optional)'}
+            </label>
+            <input
+              type="number"
+              className="form-input"
+              value={customFeeInput}
+              onChange={e => setCustomFeeInput(e.target.value)}
+              placeholder={
+                reminderType === 'competition' ? `Default is ${competitionFee}` :
+                reminderType === 'manual' ? `Default is ${manualFee}` :
+                "Leave blank to use each student's normal fee"
+              }
+            />
+            {reminderType === 'fees' && (
+              <p className="text-xs text-gray-500 mt-1">
+                Leave this blank to automatically use each student's regular monthly fee.
+              </p>
+            )}
+          </div>
+          
+          {reminderType === 'manual' && (
+            <div>
+              <label className="form-label">Custom Message</label>
+              <textarea
+                className="form-textarea w-full h-32"
+                placeholder="Type your message here... You can use {{parent_name}} and {{student_name}} variables."
+                value={manualMessage}
+                onChange={e => setManualMessage(e.target.value)}
+              />
+            </div>
+          )}
+          
+          <div className="flex gap-3 mt-4">
+            <button onClick={() => setConfigModal(false)} className="btn-secondary flex-1">Cancel</button>
+            <button 
+              onClick={handleGenerateQueue} 
+              className="btn-primary flex-1" 
+              disabled={reminderType === 'manual' && !manualMessage.trim()}
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }
