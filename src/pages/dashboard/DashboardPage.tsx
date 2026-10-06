@@ -89,7 +89,7 @@ export function DashboardPage() {
     for (const student of students) {
       const message = buildWhatsAppMessage(whatsappTemplate, student, month, year)
       const { reminderId } = await initiateReminder(student.id, student.monthly_fee, message)
-      queue.push({ student, reminderId, message, sent: false })
+      queue.push({ student, reminderId, message, sent: false, amount: student.monthly_fee })
     }
     setReminderQueue(queue)
     setReminderModal(true)

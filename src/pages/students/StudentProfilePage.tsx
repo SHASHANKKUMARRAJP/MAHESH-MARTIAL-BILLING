@@ -103,7 +103,7 @@ export function StudentProfilePage() {
   const handleSendReminder = async () => {
     const message = buildWhatsAppMessage(whatsappTemplate, student, month, year)
     const { reminderId } = await initiateReminder(student.id, student.monthly_fee, message)
-    setReminderQueue([{ student, reminderId, message, sent: false }])
+    setReminderQueue([{ student, reminderId, message, sent: false, amount: student.monthly_fee }])
     setReminderModal(true)
   }
 
