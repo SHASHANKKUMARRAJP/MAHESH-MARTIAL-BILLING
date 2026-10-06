@@ -40,9 +40,7 @@ export function AppShell({ children }: AppShellProps) {
       <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 md:left-0 bg-white dark:bg-slate-900 border-r border-gray-100 dark:border-slate-800 z-30">
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-100 dark:border-slate-800">
-          <div className="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-            🥋
-          </div>
+          <img src="/logo.png.jpeg" alt="Logo" className="w-10 h-10 object-contain rounded-xl shadow-sm bg-black" />
           <div className="min-w-0 flex-1">
             <h1 className="font-bold text-gray-900 dark:text-slate-100 text-sm truncate">
               {academy?.name ?? 'Karate Academy'}
@@ -97,9 +95,7 @@ export function AppShell({ children }: AppShellProps) {
       {/* Top Header — mobile only */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-100 dark:border-slate-800 px-4 pb-3 flex items-center justify-between pt-[calc(env(safe-area-inset-top)+16px)]">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm">
-            🥋
-          </div>
+          <img src="/logo.png.jpeg" alt="Logo" className="w-9 h-9 object-contain rounded-xl shadow-sm bg-black" />
           <div className="flex flex-col">
             <h1 className="font-bold text-gray-900 dark:text-slate-100 text-[15px] leading-tight">
               {academy?.name ?? 'Karate Academy'}

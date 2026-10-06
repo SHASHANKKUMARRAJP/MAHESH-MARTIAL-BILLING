@@ -56,7 +56,7 @@ export function LoginPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950 px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <div className="text-5xl mb-4">🥋</div>
+            <img src="/logo.png.jpeg" alt="Logo" className="w-16 h-16 object-contain rounded-2xl mx-auto mb-4 bg-black shadow-md" />
             <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Reset Password</h1>
             <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Enter your email to receive a reset link</p>
           </div>
@@ -91,7 +91,7 @@ export function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="text-5xl mb-4">🥋</div>
+          <img src="/logo.png.jpeg" alt="Logo" className="w-20 h-20 object-contain rounded-2xl mx-auto mb-4 bg-black shadow-md" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Karate Academy</h1>
           <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
             Manager · {isSignUp ? 'Create your account' : 'Sign in to continue'}

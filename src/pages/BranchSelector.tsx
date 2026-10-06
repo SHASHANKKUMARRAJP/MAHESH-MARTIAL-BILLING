@@ -11,6 +11,7 @@ export function BranchSelector() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
       <div className="text-center mb-10">
+        <img src="/logo.png.jpeg" alt="Logo" className="w-24 h-24 object-contain rounded-2xl mx-auto mb-6 shadow-xl bg-black" />
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Karate Academy</h1>
         <p className="text-gray-500 dark:text-gray-400">Select a branch to manage</p>
       </div>
