@@ -13,6 +13,7 @@ import { Modal } from '../../components/ui/Modal'
 import { ConfirmDialog } from '../../components/ui/Modal'
 import { PaymentModal } from '../../components/ui/PaymentModal'
 import { ReminderModal, type ReminderQueueItem } from '../../components/ui/ReminderModal'
+import { ReminderConfigModal } from '../../components/reminders/ReminderConfigModal'
 import { FeeStatusBadge, ReminderStatusBadge } from '../../components/ui/StatusBadges'
 import { LoadingState, StudentCardSkeleton } from '../../components/ui/LoadingState'
 import { EmptyState } from '../../components/ui/EmptyState'
@@ -26,7 +27,7 @@ export function StudentsPage() {
   const { students, loading, addStudent, updateStudent, deleteStudent } = useStudents()
   const { payments, markPaid, markPending } = usePayments(month, year)
   const { reminders, initiateReminder, confirmReminderSent, resetReminder, fetchReminders } = useReminders(month, year)
-  const { settings, whatsappTemplate } = useSettings()
+  const { settings, whatsappTemplate, competitionTemplate } = useSettings()
   const { showToast } = useToast()
   const navigate = useNavigate()
 
@@ -38,6 +39,8 @@ export function StudentsPage() {
   const [paymentModal, setPaymentModal] = useState<Student | null>(null)
   const [reminderQueue, setReminderQueue] = useState<ReminderQueueItem[]>([])
   const [reminderModal, setReminderModal] = useState(false)
+  const [configModalOpen, setConfigModalOpen] = useState(false)
+  const [selectedStudentForReminder, setSelectedStudentForReminder] = useState<Student | null>(null)
   const [formLoading, setFormLoading] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
 
@@ -132,10 +135,25 @@ export function StudentsPage() {
     else showToast('success', `Reminder status reset to Not Sent for ${student.student_name}`)
   }
 
-  const handleSendReminder = async (student: Student) => {
-    const message = buildWhatsAppMessage(whatsappTemplate, student, month, year)
-    const { reminderId } = await initiateReminder(student.id, student.monthly_fee, message)
-    setReminderQueue([{ student, reminderId, message, sent: false, amount: student.monthly_fee }])
+  const handleSendReminder = (student: Student) => {
+    setSelectedStudentForReminder(student)
+    setConfigModalOpen(true)
+  }
+
+  const handleGenerateQueue = async (config: { type: string, customAmount?: number, customMessage: string }) => {
+    if (!selectedStudentForReminder) return
+    const student = selectedStudentForReminder
+    
+    let template = whatsappTemplate
+    if (config.type === 'competition') template = competitionTemplate
+    else if (config.type === 'manual') template = config.customMessage
+    
+    const finalAmount = config.customAmount !== undefined ? config.customAmount : student.monthly_fee
+    const message = buildWhatsAppMessage(template, student, month, year, finalAmount)
+    const { reminderId } = await initiateReminder(student.id, finalAmount, message)
+    
+    setConfigModalOpen(false)
+    setReminderQueue([{ student, reminderId, message, sent: false, amount: finalAmount }])
     setReminderModal(true)
   }
 
@@ -383,6 +401,13 @@ export function StudentsPage() {
         year={year}
         onMarkSent={handleMarkSent}
         onCancel={(i) => setReminderQueue(prev => prev.map((q, idx) => idx === i ? { ...q, sent: false } : q))}
+      />
+
+      <ReminderConfigModal
+        isOpen={configModalOpen}
+        onClose={() => setConfigModalOpen(false)}
+        students={selectedStudentForReminder ? [selectedStudentForReminder] : []}
+        onContinue={handleGenerateQueue}
       />
     </div>
   )
