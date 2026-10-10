@@ -101,21 +101,18 @@ export function validateIndianPhone(phone: string): boolean {
 // WHATSAPP UTILITIES
 // ============================================
 
-export const DEFAULT_WHATSAPP_TEMPLATE = `🥋 Karate Academy Fee Reminder
+export const DEFAULT_WHATSAPP_TEMPLATE = `Dear {{parent_name}},
 
-Dear {{parent_name}},
+Greetings from Mahesh Martial Arts Academy.
 
-This is a gentle reminder regarding {{student_name}}'s karate class fee for {{month}} {{year}}.
+Kindly note that this is a gentle reminder regarding {{student_name}}'s {{month}} {{year}} ({{first_of_month}}) monthly fees. We kindly request you to complete the fee payment of ₹{{amount}} on or before {{due_date}}.
 
-💰 Amount: ₹{{amount}}
+Thank you for your continued support and cooperation.
 
-Kindly complete the payment at your convenience.
+Regards,
+Mahesh Martial Arts Academy 🥋`
 
-Thank you 🙏
-
-Karate Academy`
-
-export const DEFAULT_COMPETITION_TEMPLATE = `🥋 Karate Academy Competition Reminder
+export const DEFAULT_COMPETITION_TEMPLATE = `🥋 Mahesh Martial Arts Academy Competition Reminder
 
 Dear {{parent_name}},
 
@@ -125,7 +122,7 @@ This is a gentle reminder regarding the upcoming karate competition for {{studen
 
 Thank you 🙏
 
-Karate Academy`
+Mahesh Martial Arts Academy`
 
 export const DEFAULT_MANUAL_TEMPLATE = `Dear {{parent_name}},
 
@@ -135,7 +132,7 @@ Type your custom message here regarding {{student_name}}...
 
 Thank you 🙏
 
-Karate Academy`
+Mahesh Martial Arts Academy`
 
 export function buildWhatsAppMessage(
   template: string,
@@ -145,13 +142,24 @@ export function buildWhatsAppMessage(
   customAmount?: number
 ): string {
   const amount = customAmount !== undefined ? customAmount : student.monthly_fee;
+  
+  const monthPad = String(month).padStart(2, '0');
+  const firstOfMonth = `01/${monthPad}/${year}`;
+  
+  const dueMonth = month === 12 ? 1 : month + 1;
+  const dueYear = month === 12 ? year + 1 : year;
+  const dueMonthPad = String(dueMonth).padStart(2, '0');
+  const dueDate = `10/${dueMonthPad}/${dueYear}`;
+
   return template
     .replace(/{{parent_name}}/g, student.parent_name)
     .replace(/{{student_name}}/g, student.student_name)
     .replace(/{{month}}/g, MONTH_NAMES[month - 1])
     .replace(/{{year}}/g, String(year))
     .replace(/{{amount}}/g, String(amount))
-    .replace(/{{academy_name}}/g, 'Karate Academy')
+    .replace(/{{first_of_month}}/g, firstOfMonth)
+    .replace(/{{due_date}}/g, dueDate)
+    .replace(/{{academy_name}}/g, 'Mahesh Martial Arts Academy')
 }
 
 export function buildWhatsAppLink(phone: string, message: string): string {

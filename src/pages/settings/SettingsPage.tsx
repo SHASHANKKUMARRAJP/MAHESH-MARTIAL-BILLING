@@ -10,6 +10,7 @@ import { useToast } from '../../contexts/ToastContext'
 import { LoadingState } from '../../components/ui/LoadingState'
 import { Modal, ConfirmDialog } from '../../components/ui/Modal'
 import type { Theme } from '../../types'
+import { DEFAULT_WHATSAPP_TEMPLATE, DEFAULT_COMPETITION_TEMPLATE, DEFAULT_MANUAL_TEMPLATE } from '../../lib/utils'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -343,7 +344,6 @@ export function SettingsPage() {
         </p>
       </div>
 
-      {/* Template Modal */}
       <Modal isOpen={templateOpen !== 'none'} onClose={() => setTemplateOpen('none')} title="Edit WhatsApp Template">
         <div className="space-y-4">
           <textarea
@@ -352,9 +352,22 @@ export function SettingsPage() {
             onChange={e => setCurrentTemplate(e.target.value)}
           />
           <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-3">
-            <p className="text-xs text-gray-400 dark:text-slate-500 mb-1.5">Click a variable to insert:</p>
+            <div className="flex justify-between items-center mb-1.5">
+              <p className="text-xs text-gray-400 dark:text-slate-500">Click a variable to insert:</p>
+              <button 
+                type="button"
+                onClick={() => {
+                  if (templateOpen === 'fees') setCurrentTemplate(DEFAULT_WHATSAPP_TEMPLATE);
+                  else if (templateOpen === 'competition') setCurrentTemplate(DEFAULT_COMPETITION_TEMPLATE);
+                  else if (templateOpen === 'manual') setCurrentTemplate(DEFAULT_MANUAL_TEMPLATE);
+                }}
+                className="text-xs text-brand-600 dark:text-brand-400 hover:underline"
+              >
+                Reset to Default
+              </button>
+            </div>
             <div className="flex flex-wrap gap-1.5">
-              {['{{parent_name}}', '{{student_name}}', '{{month}}', '{{year}}', '{{amount}}'].map(v => (
+              {['{{parent_name}}', '{{student_name}}', '{{month}}', '{{year}}', '{{amount}}', '{{first_of_month}}', '{{due_date}}'].map(v => (
                 <button
                   key={v}
                   type="button"
