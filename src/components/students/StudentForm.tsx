@@ -138,9 +138,9 @@ export function StudentForm({ initial, defaultFee = 800, onSubmit, onCancel, loa
             type="number"
             className={`form-input rounded-l-none ${errors.monthly_fee ? 'border-red-400 focus:ring-red-400' : ''}`}
             placeholder="800"
-            value={form.monthly_fee}
+            value={form.monthly_fee === 0 ? '' : form.monthly_fee}
             min={1}
-            onChange={e => setForm(f => ({ ...f, monthly_fee: Number(e.target.value) }))}
+            onChange={e => setForm(f => ({ ...f, monthly_fee: e.target.value === '' ? 0 : Number(e.target.value) }))}
           />
         </div>
         {errors.monthly_fee && <p className="form-error">{errors.monthly_fee}</p>}
